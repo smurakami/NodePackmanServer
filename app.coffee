@@ -241,10 +241,19 @@ class Main
           @main_view = ws
         if data.client_type == 'player'
           @createPlayer ws
+
       when "control"
         control = data.control
         console.log control
         ws.player.control = control
+
+      when "color"
+        color = data.color
+        index = data.index
+        player = @player_list[index]
+        @send player.ws,
+          event: "color"
+          color: color
 
   createPlayer: (ws) ->
     player = new Player(ws)

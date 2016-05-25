@@ -202,9 +202,11 @@ class Main
 
   onmessage: (data) ->
     console.log(data)
-    # switch data.event
-    #   when 'location'
-    #     @setRoom data.room_id
+    switch data.event
+      when 'color'
+        console.log 'color'
+        color = data.color
+        $('body').css 'background-color', color
     #   when 'team'
     #     @setTeamNum data
     #   when 'start'

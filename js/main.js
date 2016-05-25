@@ -207,7 +207,14 @@
     };
 
     Main.prototype.onmessage = function(data) {
-      return console.log(data);
+      var color;
+      console.log(data);
+      switch (data.event) {
+        case 'color':
+          console.log('color');
+          color = data.color;
+          return $('body').css('background-color', color);
+      }
     };
 
     return Main;

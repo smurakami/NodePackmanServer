@@ -196,6 +196,8 @@ class Main
     data = JSON.parse(message)
     console.log data
     switch data.event
+      when "client_type"
+        console.log "client_type"
       # when "location"
       #   @assignRoom ws, data
       # when "team"

@@ -171,6 +171,10 @@ class Player
     @id = Player.counter
     Player.counter += 1
 
+  remove: ->
+    @ws.player = null
+    @ws = null
+
   # update: ->
   #   return if control == null
   #   @ws.send JSON.stringify
@@ -209,12 +213,21 @@ class Main
 
   closeConnection: (ws) ->
     console.log 'close'
-    return unless ws.room?
-    room = ws.room
-    room.removeWS ws
-    console.log "length : #{room.ws_list.length}"
-    if room.ws_list.length == 0
-      room.destroy()
+    if ws == @main_view
+      @main_view = null
+      return
+
+    removeIndex = null
+    for player, i in @player_list
+      if player.ws == ws
+        removeIndex = i
+        break
+
+    if removeIndex?
+      @player_list.splice(removeIndex)
+      @send @main_view,
+        event: "remove"
+        index: removeIndex
 
   onMessage: (ws, message) ->
     data = JSON.parse(message)
@@ -229,6 +242,7 @@ class Main
           @createPlayer ws
       when "control"
         control = data.control
+        console.log control
         ws.player.control = control
 
   createPlayer: (ws) ->
@@ -239,20 +253,21 @@ class Main
       event: "create_player"
 
   send: (ws, object) -> 
+    return unless ws
     if ws.readyState != @WebSocket.OPEN
       console.log 'closed!!'
       return
     ws.send JSON.stringify(object)
 
   update: ->
-    console.log "update"
-    return if @main_view == null
     control_list = (player.control for player in @player_list)
+    console.log control_list
+    if @main_view?
+      @send @main_view,
+        event: "control"
+        control: control_list
     for player in @player_list
       player.control = "none"
-    @send @main_view,
-      event: "control"
-      control: control_list
 
   # assignRoom: (ws, data) ->
   #   location = data.location

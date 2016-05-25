@@ -1,7 +1,95 @@
+class Swipe
+  constructor: ->
+    @prev = {x: 0, y: 0}
+    @pos = {x: 0, y: 0}
+    @touching = false
+    @swiped = false
+    @threshold = 10
+
+    @onleft = []
+    @onright = []
+    @onup = []
+    @ondown = []
+
+    window.addEventListener 'touchstart', (e) =>
+      @touchstarted e
+    window.addEventListener 'touchmove', (e) =>
+      @touchmoved e
+    window.addEventListener 'touchend', (e) =>
+      @touchended e
+
+    setInterval =>
+      @update()
+    , 33
+
+  update: ->
+    return unless @touching
+    return if @swiped
+    dx = @pos.x - @prev.x
+    dy = @pos.y - @prev.y
+    if Math.abs(dx) > Math.abs(dy)
+      # 横スワイプ
+      if dx < -@threshold
+        @swipedLeft()
+        @swiped = true
+      else if dx > @threshold
+        @swipedRight()
+        @swiped = true
+    else
+      # 縦スワイプ
+      if dy < -@threshold
+        @swipedUp()
+        @swiped = true
+      else if dy > @threshold
+        @swipedDown()
+        @swiped = true
+
+  swipedLeft: ->
+    for func in @onleft
+      func()
+
+  swipedRight: ->
+    for func in @onright
+      func()
+
+  swipedUp: ->
+    for func in @onup
+      func()
+
+  swipedDown: ->
+    for func in @ondown
+      func()
+
+  touchstarted: (e) ->
+    @touching = true
+    x = e.touches[0].pageX;
+    y = e.touches[0].pageY;
+    @prev.x = x
+    @prev.y = y
+    @pos.x = x
+    @pos.y = y
+
+  touchmoved: (e) ->
+    x = e.changedTouches[0].pageX;
+    y = e.changedTouches[0].pageY;
+    @prev.x = @pos.x
+    @prev.y = @pos.y
+    @pos.x = x
+    @pos.y = y
+
+  touchended: (e) ->
+    @touching = false
+    @swiped = false
+    @prev.x = @pos.x
+    @prev.y = @pos.y
+
+this.swipe = new Swipe
+
 class Main
   constructor:  ->
     @init()
     @initSocket()
+    @initController()
     # @init()
     # @initCSS()
     # @initScroll()
@@ -31,6 +119,23 @@ class Main
     @socket.onmessage = (data) =>
       console.log data
       @onmessage data
+
+  initController: ->
+    swipe.onright.push =>
+      @sendControl 'right'
+    swipe.onleft.push =>
+      @sendControl 'left'
+    swipe.onup.push =>
+      @sendControl 'up'
+    swipe.ondown.push =>
+      @sendControl 'down'
+
+  sendControl: (control) ->
+    console.log control
+    @socket.send
+      event: "control"
+      control: control
+
 
 #   initCSS: ->
 #     height = Number $('#background .border').css('height').replace('px', '')
@@ -95,18 +200,19 @@ class Main
 #     @message.show '.connecting'
 #     @initSocket()
 
-#   onmessage: (data) ->
-#     switch data.event
-#       when 'location'
-#         @setRoom data.room_id
-#       when 'team'
-#         @setTeamNum data
-#       when 'start'
-#         @gameStart()
-#       when 'scroll'
-#         @receiveScroll data
-#       when 'finish'
-#         @finish data
+  onmessage: (data) ->
+    console.log(data)
+    # switch data.event
+    #   when 'location'
+    #     @setRoom data.room_id
+    #   when 'team'
+    #     @setTeamNum data
+    #   when 'start'
+    #     @gameStart()
+    #   when 'scroll'
+    #     @receiveScroll data
+    #   when 'finish'
+    #     @finish data
 
 #   setRoom: (room_id) ->
 #     @room_id = room_id

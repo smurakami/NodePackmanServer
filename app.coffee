@@ -166,8 +166,17 @@ class Player
   @counter: 0
   constructor: (ws) ->
     @ws = ws
+    ws.player = @
+    @control = "none"
     @id = Player.counter
     Player.counter += 1
+
+  # update: ->
+  #   return if control == null
+  #   @ws.send JSON.stringify
+  #     event: control
+  #     control: control
+  #   control = null
 
 class Main
   constructor: ->
@@ -176,8 +185,12 @@ class Main
   init: ->
     @main_view = null
     @player_list = []
+    setInterval =>
+      @update()
+    , 33
   setupWSS: ->
     WebSocketServer = require('ws').Server
+    @WebSocket = require('ws')
     http = require('http')
     express = require('express')
     app = express();
@@ -214,6 +227,9 @@ class Main
           @main_view = ws
         if data.client_type == 'player'
           @createPlayer ws
+      when "control"
+        control = data.control
+        ws.player.control = control
 
   createPlayer: (ws) ->
     player = new Player(ws)
@@ -222,7 +238,21 @@ class Main
     @send @main_view,
       event: "create_player"
 
-  send: (ws, object) -> ws.send JSON.stringify(object)
+  send: (ws, object) -> 
+    if ws.readyState != @WebSocket.OPEN
+      console.log 'closed!!'
+      return
+    ws.send JSON.stringify(object)
+
+  update: ->
+    console.log "update"
+    return if @main_view == null
+    control_list = (player.control for player in @player_list)
+    for player in @player_list
+      player.control = "none"
+    @send @main_view,
+      event: "control"
+      control: control_list
 
   # assignRoom: (ws, data) ->
   #   location = data.location

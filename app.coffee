@@ -176,11 +176,12 @@ class Main
     self = @
     @wss = new WebSocketServer({server:server});
     @wss.on 'connection', (ws) ->
+      console.log 'connected'
       ws.on 'close', ->
         self.closeConnection(ws)
       ws.on 'message', (message) ->
         self.onMessage ws, message
-    server.listen(3000);
+    server.listen 3000
 
   closeConnection: (ws) ->
     console.log 'close'
@@ -195,45 +196,45 @@ class Main
     data = JSON.parse(message)
     console.log data
     switch data.event
-      when "location"
-        @assignRoom ws, data
-      when "team"
-        @assignTeam ws, data
-      when "start"
-        @startGame ws
-      when "scroll"
-        @scroll ws, data
+      # when "location"
+      #   @assignRoom ws, data
+      # when "team"
+      #   @assignTeam ws, data
+      # when "start"
+      #   @startGame ws
+      # when "scroll"
+      #   @scroll ws, data
 
   send: (ws, object) -> ws.send JSON.stringify(object)
 
-  assignRoom: (ws, data) ->
-    location = data.location
-    room = Room.findByLocation(location)
-    if room?
-      room.addWS ws
-    else
-      room = new Room(ws, location)
-      Room.save room
-    @send ws,
-      event: "location"
-      room_id: ws.room.id
+  # assignRoom: (ws, data) ->
+  #   location = data.location
+  #   room = Room.findByLocation(location)
+  #   if room?
+  #     room.addWS ws
+  #   else
+  #     room = new Room(ws, location)
+  #     Room.save room
+  #   @send ws,
+  #     event: "location"
+  #     room_id: ws.room.id
 
-  assignTeam: (ws, data) ->
-    ws.team = data.team
-    ws.room.updateTeam()
+  # assignTeam: (ws, data) ->
+  #   ws.team = data.team
+  #   ws.room.updateTeam()
 
-  startGame: (ws) ->
-    ws.room.start()
+  # startGame: (ws) ->
+  #   ws.room.start()
 
-  scroll: (ws, data) ->
-    room = ws.room
-    value = data.value
-    team = data.team
-    switch team
-      when "a"
-        room.scroll_value.a += value
-      when "b"
-        room.scroll_value.b += value
+  # scroll: (ws, data) ->
+  #   room = ws.room
+  #   value = data.value
+  #   team = data.team
+  #   switch team
+  #     when "a"
+  #       room.scroll_value.a += value
+  #     when "b"
+  #       room.scroll_value.b += value
 
 
 process.on 'uncaughtException', (err) ->

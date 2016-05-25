@@ -181,7 +181,7 @@ class Main
         self.closeConnection(ws)
       ws.on 'message', (message) ->
         self.onMessage ws, message
-    server.listen 3000
+    server.listen 3010
 
   closeConnection: (ws) ->
     console.log 'close'

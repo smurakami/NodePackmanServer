@@ -1,0 +1,10 @@
+{
+  "name": "node_packman_server",
+  "version": "0.0.1",
+  "engines": "0.0.1",
+  "author": "smurakami",
+  "dependencies": {
+    "express": "",
+    "ws": ""
+  }
+}

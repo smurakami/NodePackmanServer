@@ -249,18 +249,21 @@ class Main
 
       when "color"
         color = data.color
-        index = data.index
-        player = @player_list[index]
-        @send player.ws,
-          event: "color"
-          color: color
+        id = data.id
+        for player in @player_list
+          if player.id == id
+            @send player.ws,
+              event: "color"
+              color: color
+            break
 
   createPlayer: (ws) ->
     player = new Player(ws)
     console.log "player #{player.id}"
     @player_list.push player
     @send @main_view,
-      event: "create_player"
+      event: "create_player",
+      id: player.id
 
   send: (ws, object) -> 
     return unless ws

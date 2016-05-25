@@ -151,6 +151,7 @@
   Main = (function() {
     function Main() {
       this.init();
+      this.initButtonPanel();
       this.initSocket();
       this.initController();
     }
@@ -204,6 +205,35 @@
         event: "control",
         control: control
       });
+    };
+
+    Main.prototype.initButtonPanel = function() {
+      $('#show_button').click(function() {
+        return $('#button_panel').css('display', 'block');
+      });
+      $('#button_panel .back_button').click(function() {
+        return $('#button_panel').css('display', 'none');
+      });
+      $('#button_panel .up_button').click((function(_this) {
+        return function() {
+          return _this.sendControl('up');
+        };
+      })(this));
+      $('#button_panel .left_button').click((function(_this) {
+        return function() {
+          return _this.sendControl('left');
+        };
+      })(this));
+      $('#button_panel .right_button').click((function(_this) {
+        return function() {
+          return _this.sendControl('right');
+        };
+      })(this));
+      return $('#button_panel .down_button').click((function(_this) {
+        return function() {
+          return _this.sendControl('down');
+        };
+      })(this));
     };
 
     Main.prototype.onmessage = function(data) {

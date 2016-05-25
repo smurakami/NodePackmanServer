@@ -5,6 +5,7 @@
     <meta charset='utf-8'>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'>
     <!-- Bootstrap -->
+    <link href='css/bootstrap.min.css' rel='stylesheet'>
     <link href='css/style.css' rel='stylesheet'>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -14,7 +15,28 @@
     <![endif]-->
   </head>
   <body>
+    <div class='btn btn-primary' id='show_button'>
+      button
+    </div>
+    <div id='button_panel'>
+      <div class='up_button btn btn-primary'>
+        up
+      </div>
+      <div class='left_button btn btn-success'>
+        left
+      </div>
+      <div class='right_button btn btn-warning'>
+        right
+      </div>
+      <div class='down_button btn btn-primary'>
+        down
+      </div>
+      <div class='back_button btn btn-danger'>
+        back
+      </div>
+    </div>
     <script src='js/jquery-2.1.0.min.js'></script>
+    <script src='js/bootstrap.min.js'></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src='js/socket.js'></script>
     <script src='js/main.js'></script>

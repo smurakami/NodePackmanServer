@@ -88,6 +88,7 @@ this.swipe = new Swipe
 class Main
   constructor:  ->
     @init()
+    @initButtonPanel()
     @initSocket()
     @initController()
     # @init()
@@ -136,69 +137,24 @@ class Main
       event: "control"
       control: control
 
+  initButtonPanel: ->
+    $('#show_button').click ->
+      $('#button_panel').css 'display', 'block'
 
-#   initCSS: ->
-#     height = Number $('#background .border').css('height').replace('px', '')
-#     top = $(window).height() * 0.5 - height / 2
-#     $('#background .border').css 'top', top
-#     if $(window).height() < $(window).width()
-#       width = 375
-#       left = ($(window).width() - width) / 2
-#       for selector in [
-#         '#message_container',
-#         '#scroll_container'
-#         '#tutorial'
-#         ]
-#         $(selector).css 'width', width
-#         $(selector).css 'margin-left', left
-#       $('#training').css 'width', width
-#       $('#training .home').css 'left', left + 16
-#       $('#training .twitter').css 'right', left + 16
+    $('#button_panel .back_button').click ->
+      $('#button_panel').css 'display', 'none'
 
-#   initScroll: ->
-#     @scrollManager = new ScrollManager()
-#     @scrollManager.scrollHandler = (top, prev) =>
-#       height = $('#scroll_body').height()
-#       min_top = height * 0.1
-#       max_top = height * 0.9
-#       start_height = height * 0.5
-#       @scrollValue += -(top - prev)
-#       if top < min_top or top > max_top
-#         $('#scroll_container').scrollTop(start_height)
-#         prev = start_height
-#       else
-#         prev = top
-#       return prev
+    $('#button_panel .up_button').click =>
+      @sendControl 'up'
 
-#   initMessage: ->
-#     @message = new MessageManager
-#     @message.show '.title'
+    $('#button_panel .left_button').click =>
+      @sendControl 'left'
 
-#   initTitle: ->
-#     @tutor = new Tutor()
-#     title = $('#message_container .title')
-#     title.find('.buttle').click =>
-#       @gotoBattleMode()
-#     title.find('.train').click =>
-#       @startTrainMode()
-#     title.find('.tutor').click =>
-#       @tutor.show()
+    $('#button_panel .right_button').click =>
+      @sendControl 'right'
 
-#   initTeamSelect: ->
-#     $('#message_container .team_select .red_button').click =>
-#       @setTeam "a"
-#     $('#message_container .team_select .white_button').click =>
-#       @setTeam "b"
-#     $('#message_container .team_select .start_button').click =>
-#       if @able_to_start
-#         @socket.send
-#           event: 'start'
-#     $('#message_container .team_select .back_button').click =>
-#       location.reload()
-
-#   gotoBattleMode: ->
-#     @message.show '.connecting'
-#     @initSocket()
+    $('#button_panel .down_button').click =>
+      @sendControl 'down'
 
   onmessage: (data) ->
     console.log(data)

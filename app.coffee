@@ -237,6 +237,7 @@ class Main
         console.log "client_type"
         if data.client_type == 'main_view'
           console.log 'mainview'
+          @player_list = []
           @main_view = ws
         if data.client_type == 'player'
           @createPlayer ws
@@ -261,7 +262,7 @@ class Main
 
   update: ->
     control_list = (player.control for player in @player_list)
-    console.log control_list
+    # console.log control_list
     if @main_view?
       @send @main_view,
         event: "control"
